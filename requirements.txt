@@ -1,2 +1,2 @@
 aiogram==3.22.0
-hikerapi>=1.7.8
+hikerapi>=1.7.9
