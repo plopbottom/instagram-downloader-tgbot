@@ -24,7 +24,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 router = Router()
-if ALLOWED_USER_IDS:
+if ALLOWED_USER_IDS and ALLOWED_USER_IDS != []:
     router.message.filter(F.from_user.id.in_(ALLOWED_USER_IDS))
 hk = AsyncClient(token=HIKERAPI_TOKEN, timeout=60)
 
