@@ -15,7 +15,7 @@ from aiogram.enums import ChatAction, ParseMode
 from aiogram.exceptions import TelegramEntityTooLarge, TelegramRetryAfter
 from hikerapi import AsyncClient
 
-from config import BOT_TOKEN, HIKERAPI_TOKEN
+from config import BOT_TOKEN, HIKERAPI_TOKEN, ALLOWED_USER_IDS
 
 logging.basicConfig(
     level=logging.INFO,
@@ -259,17 +259,17 @@ async def send_multiple_items(message: Message, items: list, label: str = "items
 # Handlers
 # ---------------------------------------------------------------------------
 
-@router.message(F.text == "/start")
+@router.message(F.text == "/start", F.from_user.id.in_(ALLOWED_USER_IDS) if ALLOWED_USER_IDS else F.any())
 async def cmd_start(message: Message) -> None:
     await message.answer(WELCOME_MESSAGE, parse_mode=ParseMode.HTML)
 
 
-@router.message(F.text == "/help")
+@router.message(F.text == "/help", F.from_user.id.in_(ALLOWED_USER_IDS) if ALLOWED_USER_IDS else F.any())
 async def cmd_help(message: Message) -> None:
     await message.answer(HELP_MESSAGE, parse_mode=ParseMode.HTML)
 
 
-@router.message(F.text)
+@router.message(F.text, F.from_user.id.in_(ALLOWED_USER_IDS) if ALLOWED_USER_IDS else F.any())
 async def handle_message(message: Message, bot: Bot) -> None:
     text = message.text or ""
     match = INSTAGRAM_URL_PATTERN.search(text)
