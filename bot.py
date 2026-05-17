@@ -24,6 +24,8 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 router = Router()
+if ALLOWED_USER_IDS:
+    router.message.filter(F.from_user.id.in_(ALLOWED_USER_IDS))
 hk = AsyncClient(token=HIKERAPI_TOKEN, timeout=60)
 
 # Fix: anchored regex, dots in path allowed, non-greedy host match only for instagram.com
@@ -259,17 +261,17 @@ async def send_multiple_items(message: Message, items: list, label: str = "items
 # Handlers
 # ---------------------------------------------------------------------------
 
-@router.message(F.text == "/start", F.from_user.id.in_(ALLOWED_USER_IDS) if ALLOWED_USER_IDS else F.any())
+@router.message(F.text == "/start")
 async def cmd_start(message: Message) -> None:
     await message.answer(WELCOME_MESSAGE, parse_mode=ParseMode.HTML)
 
 
-@router.message(F.text == "/help", F.from_user.id.in_(ALLOWED_USER_IDS) if ALLOWED_USER_IDS else F.any())
+@router.message(F.text == "/help")
 async def cmd_help(message: Message) -> None:
     await message.answer(HELP_MESSAGE, parse_mode=ParseMode.HTML)
 
 
-@router.message(F.text, F.from_user.id.in_(ALLOWED_USER_IDS) if ALLOWED_USER_IDS else F.any())
+@router.message(F.text)
 async def handle_message(message: Message, bot: Bot) -> None:
     text = message.text or ""
     match = INSTAGRAM_URL_PATTERN.search(text)
